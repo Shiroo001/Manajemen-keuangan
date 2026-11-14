@@ -24,62 +24,50 @@ Keuangan/
 ├── queries.php    # Pengambilan data master, penyusunan filter pencarian, dan agregasi data grafik
 ├── modals.php     # Komponen antarmuka modal dan template kode Google Apps Script
 ├── export.php     # Generator unduhan laporan CSV serta backup database JSON dan SQL
-└── app.js         # Kontrol tema gelap/terang, filter dropdown kategori, kontrol modal, dan inisialisasi Chart.js
+├── app.js         # Kontrol tema gelap/terang, filter dropdown kategori, kontrol modal, dan inisialisasi Chart.js
+└── README.md      # Dokumentasi proyek dan panduan instalasi
+```
 
-Prasyarat & Instalasi
-Siapkan Lingkungan Lokal:
-Pastikan XAMPP (PHP 8.0+ dan MySQL/MariaDB) sudah terpasang di komputer Anda.
+## Prasyarat & Instalasi
 
-Salin Folder Proyek:
-Clone repositori ini atau ekstrak folder proyek ke dalam direktori htdocs XAMPP (misalnya C:\xampp\htdocs\Keuangan).
+1. **Siapkan Lingkungan Lokal:**
+   Pastikan **XAMPP** (PHP 8.0+ dan MySQL/MariaDB) sudah terpasang di komputer Anda.
+2. **Salin Folder Proyek:**
+   Clone repositori ini atau ekstrak folder proyek ke dalam direktori `htdocs` XAMPP (misalnya `C:\xampp\htdocs\Keuangan`).
+3. **Jalankan Layanan XAMPP:**
+   Buka **XAMPP Control Panel**, lalu klik **Start** pada modul **Apache** dan **MySQL**.
+4. **Buka Aplikasi di Browser:**
+   Akses `http://localhost/Keuangan/` melalui browser. Aplikasi akan membuat database `expense_tracker`, 6 tabel utama, serta data awal dompet dan kategori secara otomatis saat pertama kali dibuka.
 
-Jalankan Layanan XAMPP:
-Buka XAMPP Control Panel, lalu klik Start pada modul Apache dan MySQL.
+> **Catatan Konfigurasi Database:** Pengaturan bawaan di `db.php` menggunakan host `127.0.0.1`, user `root`, dan password kosong (`""`). Sesuaikan variabel `$host`, `$user`, dan `$pass` di `db.php` apabila konfigurasi MySQL Anda berbeda.
 
-Buka Aplikasi di Browser:
-Akses http://localhost/Keuangan/ melalui browser. Aplikasi akan membuat database expense_tracker, 6 tabel utama, serta data awal dompet dan kategori secara otomatis saat pertama kali dibuka.
+## Panduan Penggunaan
 
-Catatan Konfigurasi Database: Pengaturan bawaan di db.php menggunakan host 127.0.0.1, user root, dan password kosong (""). Sesuaikan variabel $host, $user, dan $pass di db.php apabila konfigurasi MySQL Anda berbeda.
+* **Mencatat Transaksi:** Klik tombol **+ Catat Transaksi** di pojok kanan atas, pilih tipe transaksi, tanggal, dompet, kategori, nominal, dan catatan opsional, lalu simpan.
+* **Transfer Antar-Dompet:** Klik **⇄ Transfer Saldo**, pilih dompet asal dan tujuan, masukkan nominal serta tanggal transfer. Saldo kedua dompet berubah tanpa mengubah angka pemasukan/pengeluaran.
+* **Mengatur Transaksi Otomatis:** Klik **↻ Otomatis**, isi tipe, tanggal jatuh tempo bulanan (1-28), nominal, dompet, kategori, dan keterangan. Centang opsi eksekusi bulan berjalan jika ingin langsung tercatat saat itu juga.
+* **Ekspor & Backup Lokal:** Klik **☁ Backup & Sheets** untuk mengunduh laporan `.csv` sesuai filter aktif, mengunduh backup penuh `.json` atau `.sql`, maupun memulihkan database dari file `.json`.
 
-Panduan Penggunaan
-Mencatat Transaksi: Klik tombol + Catat Transaksi di pojok kanan atas, pilih tipe transaksi, tanggal, dompet, kategori, nominal, dan catatan opsional, lalu simpan.
+## Setup Auto-Sync Google Sheets
 
-Transfer Antar-Dompet: Klik ⇄ Transfer Saldo, pilih dompet asal dan tujuan, masukkan nominal serta tanggal transfer. Saldo kedua dompet berubah tanpa mengubah angka pemasukan/pengeluaran.
-
-Mengatur Transaksi Otomatis: Klik ↻ Otomatis, isi tipe, tanggal jatuh tempo bulanan (1–28), nominal, dompet, kategori, dan keterangan. Centang opsi eksekusi bulan berjalan jika ingin langsung tercatat saat itu juga.
-
-Ekspor & Backup Lokal: Klik ☁ Backup & Sheets untuk mengunduh laporan .csv sesuai filter aktif, mengunduh backup penuh .json atau .sql, maupun memulihkan database dari file .json.
-
-Setup Auto-Sync Google Sheets
 Aplikasi terhubung ke Google Sheets melalui Google Apps Script Web App tanpa memerlukan API Key atau library pihak ketiga.
 
-Buka file Google Spreadsheet tujuan, lalu pilih menu Extensions (Ekstensi) > Apps Script.
+1. Buka file Google Spreadsheet tujuan, lalu pilih menu **Extensions (Ekstensi) > Apps Script**.
+2. Hapus kode bawaan di editor (`Kode.gs`).
+3. Buka aplikasi **Expense Tracker**, klik **☁ Backup & Sheets > Lihat Cara Setup & Kode Google Apps Script**, lalu klik **Salin Kode**.
+4. Tempel kode tersebut ke editor Apps Script dan simpan (`Ctrl + S`).
+5. Klik **Deploy (Terapkan) > New deployment (Deployment baru)**.
+6. Klik ikon roda gigi di sebelah *Select type*, pilih **Web app (Aplikasi web)**, lalu atur:
+   * **Execute as (Jalankan sebagai):** `Me`
+   * **Who has access (Yang memiliki akses):** `Anyone`
+7. Klik **Deploy**, selesaikan otorisasi izin akun Google, lalu salin **Web app URL** yang berawalan `[https://script.google.com/macros/s/](https://script.google.com/macros/s/)` dan berakhiran `/exec`.
+8. Tempel URL `/exec` tersebut ke kolom **URL Web App Google Apps Script** di modal **☁ Backup & Sheets**, centang **Auto-sync tiap kali ada transaksi/transfer baru**, lalu klik **Simpan Pengaturan**.
 
-Hapus kode bawaan di editor (Kode.gs).
+Setelah aktif, skrip otomatis membuat dan memperbarui tiga tab sheet di spreadsheet Anda: **`Transaksi`**, **`Dompet`**, dan **`Transfer`**.
 
-Buka aplikasi Expense Tracker, klik ☁ Backup & Sheets > Lihat Cara Setup & Kode Google Apps Script, lalu klik Salin Kode.
+## Keamanan Aplikasi
 
-Tempel kode tersebut ke editor Apps Script dan simpan (Ctrl + S).
-
-Klik Deploy (Terapkan) > New deployment (Deployment baru).
-
-Klik ikon roda gigi di sebelah Select type, pilih Web app (Aplikasi web), lalu atur:
-
-Execute as (Jalankan sebagai): Me
-
-Who has access (Yang memiliki akses): Anyone
-
-Klik Deploy, selesaikan otorisasi izin akun Google, lalu salin Web app URL yang berawalan https://script.google.com/macros/s/ dan berakhiran /exec.
-
-Tempel URL /exec tersebut ke kolom URL Web App Google Apps Script di modal ☁ Backup & Sheets, centang Auto-sync tiap kali ada transaksi/transfer baru, lalu klik Simpan Pengaturan.
-
-Setelah aktif, skrip otomatis membuat dan memperbarui tiga tab sheet di spreadsheet Anda: Transaksi, Dompet, dan Transfer.
-
-Keamanan Aplikasi
-Proteksi CSRF: Setiap formulir POST menyertakan token acak berbasis sesi (random_bytes) yang diverifikasi menggunakan hash_equals().
-
-Pembatasan Akses Langsung: File internal (db.php, actions.php, queries.php, modals.php) memeriksa konstanta APP_INIT dan mengembalikan status 403 Forbidden jika dibuka langsung lewat URL.
-
-Integritas Transaksi Database: Operasi pengubahan saldo memakai transaksi PDO (beginTransaction/commit) dan penguncian baris (SELECT ... FOR UPDATE).
-
-Sanitasi Input & Output: Query database memakai prepared statements (PDO::ATTR_EMULATE_PREPARES => false), format tanggal divalidasi ketat, dan output HTML di-escape menggunakan htmlspecialchars().
+* **Proteksi CSRF:** Setiap formulir `POST` menyertakan token acak berbasis sesi (`random_bytes`) yang diverifikasi menggunakan `hash_equals()`.
+* **Pembatasan Akses Langsung:** File internal (`db.php`, `actions.php`, `queries.php`, `modals.php`) memeriksa konstanta `APP_INIT` dan mengembalikan status `403 Forbidden` jika dibuka langsung lewat URL.
+* **Integritas Transaksi Database:** Operasi pengubahan saldo memakai transaksi PDO (`beginTransaction`/`commit`) dan penguncian baris (`SELECT ... FOR UPDATE`).
+* **Sanitasi Input & Output:** Query database memakai *prepared statements* (`PDO::ATTR_EMULATE_PREPARES => false`), format tanggal divalidasi ketat, dan output HTML di-escape menggunakan `htmlspecialchars()`.
